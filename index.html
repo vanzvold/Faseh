@@ -53,8 +53,8 @@
       <div class="form-group"><label>Bayar Listrik (Rp)</label><input type="number" id="bayar_listrik"></div>
       <div class="form-group"><label>Pulsa/wifi bulanan (Rp)</label><input type="number" id="pulsa"></div>
       <div class="form-group"><label>Makan seminggu (Rp)</label><input type="number" id="makan_minggu"></div>
-      <div class="form-group"><label>Bukan makanan (termasuk utang/bln, BPJS, asuransi, dll) (Rp)</label><input type="number" id="bukan_makan_bulan"></div>
-      <div class="form-group"><label>Bukan makanan tahunan (PBB, pajak kendaraan, dll) (Rp)</label><input type="number" id="bukan_makan_tahun"></div>
+      <div class="form-group"><label>Bukan makanan (utang, BPJS, asuransi) (Rp)</label><input type="number" id="bukan_makan_bulan"></div>
+      <div class="form-group"><label>Bukan makanan tahunan (PBB, pajak dll) (Rp)</label><input type="number" id="bukan_makan_tahun"></div>
 
       <div class="section-title">D. Kepemilikan Barang & Kendaraan</div>
       <div class="form-group"><label>Gas 3kg (Jumlah)</label><input type="number" id="gas_3kg"></div>
@@ -84,24 +84,58 @@
       </div>
 
       <button type="submit" id="btnKirim">Simpan Data & Foto</button>
-      <div id="loadingText" class="loading-text">Sedang mengupload foto & data... Proses ini mungkin butuh waktu, mohon jangan ditutup.</div>
+      <div id="loadingText" class="loading-text">Mengecilkan ukuran foto dan mengupload... Mohon tunggu jangan ditutup!</div>
     </form>
   </div>
 
   <script>
-    // URL Web App Anda sudah terpasang di bawah ini
+    // URL Web App Anda (Tidak berubah dari sebelumnya)
     const scriptURL = 'https://script.google.com/macros/s/AKfycbzXhwmN5ng7vVx15Xg-Ic5QxqHdHzFaULnNYnyohpOuIFlhyowR2d0nxd5UxZPuTbr5/exec';
     
     const form = document.getElementById('dataForm');
     const btnKirim = document.getElementById('btnKirim');
     const loadingText = document.getElementById('loadingText');
 
-    function getBase64(file) {
+    // FITUR BARU: Fungsi untuk otomatis mengecilkan/mengkompres ukuran foto
+    function compressImage(file) {
       return new Promise((resolve, reject) => {
         if (!file) { resolve(""); return; }
+        
         const reader = new FileReader();
         reader.readAsDataURL(file);
-        reader.onload = () => resolve(reader.result);
+        reader.onload = function(event) {
+          const img = new Image();
+          img.src = event.target.result;
+          img.onload = function() {
+            // Membatasi lebar/tinggi maksimal foto jadi 800 pixel saja
+            const maxWidth = 800;
+            const maxHeight = 800;
+            let width = img.width;
+            let height = img.height;
+
+            if (width > height) {
+              if (width > maxWidth) {
+                height = Math.round(height *= maxWidth / width);
+                width = maxWidth;
+              }
+            } else {
+              if (height > maxHeight) {
+                width = Math.round(width *= maxHeight / height);
+                height = maxHeight;
+              }
+            }
+
+            const canvas = document.createElement('canvas');
+            canvas.width = width;
+            canvas.height = height;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(img, 0, 0, width, height);
+
+            // Menyimpan sebagai format JPEG dengan kualitas 60% (Biar sangat ringan dikirim)
+            resolve(canvas.toDataURL('image/jpeg', 0.6));
+          };
+          img.onerror = error => reject(error);
+        };
         reader.onerror = error => reject(error);
       });
     }
@@ -118,9 +152,10 @@
         const fileRuangTamu = document.getElementById('foto_ruang_tamu').files[0];
         const fileDepanRumah = document.getElementById('foto_depan_rumah').files[0];
 
-        const base64Meteran = await getBase64(fileMeteran);
-        const base64RuangTamu = await getBase64(fileRuangTamu);
-        const base64DepanRumah = await getBase64(fileDepanRumah);
+        // Menggunakan fungsi kompresi gambar (bukan getBase64 biasa)
+        const base64Meteran = await compressImage(fileMeteran);
+        const base64RuangTamu = await compressImage(fileRuangTamu);
+        const base64DepanRumah = await compressImage(fileDepanRumah);
 
         const payload = {
           rtrw: document.getElementById('rtrw').value,
@@ -170,7 +205,7 @@
         });
         
         const data = await response.json();
-        alert('Data dan Foto berhasil disimpan ke Google Sheet!');
+        alert('Mantap! Data dan Foto berhasil disimpan ke Google Sheet.');
         
         form.reset();
         window.scrollTo(0, 0);
