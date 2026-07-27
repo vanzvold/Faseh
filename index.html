@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Form Pendataan Penduduk Lengkap</title>
+  <title>Form Pendataan Sensus</title>
   <style>
     * { box-sizing: border-box; font-family: Arial, sans-serif; }
     body { background-color: #f4f6f9; padding: 15px; margin: 0; }
@@ -89,14 +89,13 @@
   </div>
 
   <script>
-    // URL Web App Anda (Tidak berubah dari sebelumnya)
-    const scriptURL = 'https://script.google.com/macros/s/AKfycbxVYfEt8PiuqOKuAQdqfnY2Ta4REhe0qAtP79HmNThQ8HS3O2tDilyKbuc8W45C2ui6/exec';
+    // URL Web App terbaru Anda sudah dimasukkan di sini
+    const scriptURL = 'https://script.google.com/macros/s/AKfycbzDdiRyF3aiPAdHtW7LlferXWuSxIrLoaIoey7us1jRMFSI2MGASrRzzdwbkT8rbYXq/exec';
     
     const form = document.getElementById('dataForm');
     const btnKirim = document.getElementById('btnKirim');
     const loadingText = document.getElementById('loadingText');
 
-    // FITUR BARU: Fungsi untuk otomatis mengecilkan/mengkompres ukuran foto
     function compressImage(file) {
       return new Promise((resolve, reject) => {
         if (!file) { resolve(""); return; }
@@ -107,7 +106,6 @@
           const img = new Image();
           img.src = event.target.result;
           img.onload = function() {
-            // Membatasi lebar/tinggi maksimal foto jadi 800 pixel saja
             const maxWidth = 800;
             const maxHeight = 800;
             let width = img.width;
@@ -131,7 +129,6 @@
             const ctx = canvas.getContext('2d');
             ctx.drawImage(img, 0, 0, width, height);
 
-            // Menyimpan sebagai format JPEG dengan kualitas 60% (Biar sangat ringan dikirim)
             resolve(canvas.toDataURL('image/jpeg', 0.6));
           };
           img.onerror = error => reject(error);
@@ -152,7 +149,6 @@
         const fileRuangTamu = document.getElementById('foto_ruang_tamu').files[0];
         const fileDepanRumah = document.getElementById('foto_depan_rumah').files[0];
 
-        // Menggunakan fungsi kompresi gambar (bukan getBase64 biasa)
         const base64Meteran = await compressImage(fileMeteran);
         const base64RuangTamu = await compressImage(fileRuangTamu);
         const base64DepanRumah = await compressImage(fileDepanRumah);
@@ -205,10 +201,15 @@
         });
         
         const data = await response.json();
-        alert('Mantap! Data dan Foto berhasil disimpan ke Google Sheet.');
         
-        form.reset();
-        window.scrollTo(0, 0);
+        if (data.status === 'success') {
+          alert('Mantap! Data dan Foto berhasil disimpan ke Google Sheet.');
+          form.reset();
+          window.scrollTo(0, 0);
+        } else {
+          alert('ERROR DARI SERVER: ' + data.message);
+        }
+
       } catch(err) {
         alert('Gagal mengirim data! Pastikan HP terkoneksi internet.');
         console.error('Error:', err);
