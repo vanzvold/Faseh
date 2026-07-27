@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Form Pendataan Penduduk</title>
+  <title>Form Pendataan Penduduk Lengkap</title>
   <style>
     * { box-sizing: border-box; font-family: Arial, sans-serif; }
     body { background-color: #f4f6f9; padding: 15px; margin: 0; }
@@ -12,121 +12,176 @@
     .form-group { margin-bottom: 15px; }
     label { font-weight: bold; display: block; margin-bottom: 5px; font-size: 13px; color: #555; }
     input, textarea { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px; font-size: 14px; outline: none; }
+    input[type="file"] { padding: 8px; background: #f9f9f9; }
     input:focus, textarea:focus { border-color: #007bff; }
     button { width: 100%; background-color: #007bff; color: white; font-weight: bold; border: none; padding: 14px; border-radius: 8px; font-size: 16px; cursor: pointer; }
-    button:disabled { background-color: #888; }
+    button:disabled { background-color: #888; cursor: wait; }
     .section-title { background: #eee; padding: 8px; font-size: 14px; font-weight: bold; margin: 20px -20px 15px -20px; text-align: center; color: #333; }
+    .loading-text { text-align: center; color: #d9534f; font-size: 12px; margin-top: 10px; font-weight: bold; display: none; }
   </style>
 </head>
 <body>
 
   <div class="form-card">
-    <h2>Formulir Pendataan</h2>
+    <h2>Formulir Pendataan Warga</h2>
     <form id="dataForm">
       
-      <div class="section-title">A. Data Diri & Tempat Tinggal</div>
+      <div class="section-title">A. Data Diri & KK</div>
       <div class="form-group"><label>RTRW</label><input type="text" id="rtrw" required></div>
       <div class="form-group"><label>Nama Lengkap</label><input type="text" id="nama" required></div>
+      <div class="form-group"><label>Jumlah orang dalam KK</label><input type="number" id="jumlah_orang_kk"></div>
+      <div class="form-group"><label>1 alamat berapa KK</label><input type="number" id="alamat_kk"></div>
+      <div class="form-group"><label>No KK tambahan</label><input type="text" id="kk_tambahan"></div>
+      <div class="form-group"><label>Catatan tambahan</label><textarea id="catatan_tambahan" rows="2"></textarea></div>
       <div class="form-group"><label>Alamat</label><textarea id="alamat" rows="2" required></textarea></div>
       <div class="form-group"><label>C/T</label><input type="text" id="ct"></div>
-      <div class="form-group"><label>No HP</label><input type="tel" id="no_hp" required></div>
+      <div class="form-group"><label>Disabilitas/ada yang sakit menahun</label><input type="text" id="disabilitas"></div>
+      
+      <div class="section-title">B. Pekerjaan & Aset Tanah</div>
       <div class="form-group"><label>Usaha/Kerja</label><input type="text" id="usaha"></div>
+      <div class="form-group"><label>Catatan pekerjaan</label><textarea id="catatan_pekerjaan" rows="2"></textarea></div>
       <div class="form-group"><label>Gaji (Rp)</label><input type="number" id="gaji"></div>
-
-      <div class="section-title">B. Aset Rumah & Tanah</div>
-      <div class="form-group"><label>Status Rumah</label><input type="text" id="status_rumah"></div>
-      <div class="form-group"><label>Status Surat Tanah</label><input type="text" id="surat_tanah"></div>
-      <div class="form-group"><label>Luas Tanah (Meter Persegi)</label><input type="number" id="luas_tanah"></div>
-      <div class="form-group"><label>Tanah di Tempat Lain</label><input type="text" id="tanah_lain"></div>
-      <div class="form-group"><label>Perkiraan Harga Tanah (Rp)</label><input type="number" id="harga_tanah"></div>
+      <div class="form-group"><label>Status rumah</label><input type="text" id="status_rumah"></div>
+      <div class="form-group"><label>Status surat tanah</label><input type="text" id="surat_tanah"></div>
+      <div class="form-group"><label>Luas tanah (m2)</label><input type="number" id="luas_tanah"></div>
+      <div class="form-group"><label>Tanah di tempat lain</label><input type="text" id="tanah_lain"></div>
+      <div class="form-group"><label>Perkiraan harga tanah (Rp)</label><input type="number" id="harga_tanah"></div>
 
       <div class="section-title">C. Utilitas & Pengeluaran</div>
       <div class="form-group"><label>Meteran/IDPEL</label><input type="text" id="idpel"></div>
-      <div class="form-group"><label>Berapa Watt?</label><input type="number" id="watt"></div>
+      <div class="form-group"><label>Berapa watt?</label><input type="number" id="watt"></div>
       <div class="form-group"><label>Bayar Listrik (Rp)</label><input type="number" id="bayar_listrik"></div>
-      <div class="form-group"><label>Pulsa/Wifi Bulanan (Rp)</label><input type="number" id="pulsa"></div>
-      <div class="form-group"><label>Makan Seminggu (Rp)</label><input type="number" id="makan_minggu"></div>
-      <div class="form-group"><label>Bukan Makanan per Bulan (Rp)</label><input type="number" id="bukan_makan_bulan"></div>
-      <div class="form-group"><label>Bukan Makanan Tahunan (Rp)</label><input type="number" id="bukan_makan_tahun"></div>
+      <div class="form-group"><label>Pulsa/wifi bulanan (Rp)</label><input type="number" id="pulsa"></div>
+      <div class="form-group"><label>Makan seminggu (Rp)</label><input type="number" id="makan_minggu"></div>
+      <div class="form-group"><label>Bukan makanan (termasuk utang/bln, BPJS, asuransi, dll) (Rp)</label><input type="number" id="bukan_makan_bulan"></div>
+      <div class="form-group"><label>Bukan makanan tahunan (PBB, pajak kendaraan, dll) (Rp)</label><input type="number" id="bukan_makan_tahun"></div>
 
       <div class="section-title">D. Kepemilikan Barang & Kendaraan</div>
       <div class="form-group"><label>Gas 3kg (Jumlah)</label><input type="number" id="gas_3kg"></div>
       <div class="form-group"><label>Gas 5kg++ (Jumlah)</label><input type="number" id="gas_5kg"></div>
       <div class="form-group"><label>Kulkas (Jumlah)</label><input type="number" id="kulkas"></div>
       <div class="form-group"><label>AC (Jumlah)</label><input type="number" id="ac"></div>
-      <div class="form-group"><label>Komp/Laptop/Tab (Jumlah)</label><input type="number" id="gadget"></div>
-      <div class="form-group"><label>Sepeda Motor (Jumlah/Tipe)</label><input type="text" id="motor"></div>
-      <div class="form-group"><label>Nilai Motor (Rp)</label><input type="number" id="nilai_motor"></div>
-      <div class="form-group"><label>Mobil (Jumlah/Tipe)</label><input type="text" id="mobil"></div>
-      <div class="form-group"><label>Nilai Mobil (Rp)</label><input type="number" id="nilai_mobil"></div>
+      <div class="form-group"><label>Komp/laptop/tab (Jumlah)</label><input type="number" id="gadget"></div>
+      <div class="form-group"><label>Sepeda motor</label><input type="text" id="motor"></div>
+      <div class="form-group"><label>Nilai motor (Rp)</label><input type="number" id="nilai_motor"></div>
+      <div class="form-group"><label>Mobil</label><input type="text" id="mobil"></div>
+      <div class="form-group"><label>Nilai mobil (Rp)</label><input type="number" id="nilai_mobil"></div>
+      <div class="form-group"><label>Emas (Gram/Nilai)</label><input type="text" id="emas"></div>
+      <div class="form-group"><label>No HP</label><input type="tel" id="no_hp" required></div>
 
-      <button type="submit" id="btnKirim">Simpan Data</button>
+      <div class="section-title">E. Lampiran Foto</div>
+      <div class="form-group">
+        <label>Foto meteran</label>
+        <input type="file" id="foto_meteran" accept="image/*">
+      </div>
+      <div class="form-group">
+        <label>Foto ruang tamu</label>
+        <input type="file" id="foto_ruang_tamu" accept="image/*">
+      </div>
+      <div class="form-group">
+        <label>Foto Tampak depan</label>
+        <input type="file" id="foto_depan_rumah" accept="image/*">
+      </div>
+
+      <button type="submit" id="btnKirim">Simpan Data & Foto</button>
+      <div id="loadingText" class="loading-text">Sedang mengupload foto & data... Proses ini mungkin butuh waktu, mohon jangan ditutup.</div>
     </form>
   </div>
 
   <script>
-    // URL Web App Anda sudah otomatis terpasang di sini
-    const scriptURL = 'https://script.google.com/macros/s/AKfycbwzcImLn9mgd93pCLTJoaIunJnvd4sXUjAjHRpU853J-FxDHEVXkIWd_Pr_nYLBF8bW/exec';
+    // URL Web App Anda sudah terpasang di bawah ini
+    const scriptURL = 'https://script.google.com/macros/s/AKfycbzXhwmN5ng7vVx15Xg-Ic5QxqHdHzFaULnNYnyohpOuIFlhyowR2d0nxd5UxZPuTbr5/exec';
     
     const form = document.getElementById('dataForm');
     const btnKirim = document.getElementById('btnKirim');
+    const loadingText = document.getElementById('loadingText');
 
-    form.addEventListener('submit', e => {
+    function getBase64(file) {
+      return new Promise((resolve, reject) => {
+        if (!file) { resolve(""); return; }
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = error => reject(error);
+      });
+    }
+
+    form.addEventListener('submit', async (e) => {
       e.preventDefault();
       
-      btnKirim.innerText = 'Menyimpan...';
+      btnKirim.innerText = 'Mengupload...';
       btnKirim.disabled = true;
+      loadingText.style.display = 'block';
 
-      // Mengambil semua 28 data inputan
-      const payload = {
-        rtrw: document.getElementById('rtrw').value,
-        nama: document.getElementById('nama').value,
-        alamat: document.getElementById('alamat').value,
-        ct: document.getElementById('ct').value,
-        usaha: document.getElementById('usaha').value,
-        gaji: document.getElementById('gaji').value,
-        status_rumah: document.getElementById('status_rumah').value,
-        surat_tanah: document.getElementById('surat_tanah').value,
-        luas_tanah: document.getElementById('luas_tanah').value,
-        idpel: document.getElementById('idpel').value,
-        watt: document.getElementById('watt').value,
-        bayar_listrik: document.getElementById('bayar_listrik').value,
-        pulsa: document.getElementById('pulsa').value,
-        makan_minggu: document.getElementById('makan_minggu').value,
-        bukan_makan_bulan: document.getElementById('bukan_makan_bulan').value,
-        bukan_makan_tahun: document.getElementById('bukan_makan_tahun').value,
-        gas_3kg: document.getElementById('gas_3kg').value,
-        gas_5kg: document.getElementById('gas_5kg').value,
-        kulkas: document.getElementById('kulkas').value,
-        ac: document.getElementById('ac').value,
-        gadget: document.getElementById('gadget').value,
-        motor: document.getElementById('motor').value,
-        nilai_motor: document.getElementById('nilai_motor').value,
-        mobil: document.getElementById('mobil').value,
-        nilai_mobil: document.getElementById('nilai_mobil').value,
-        tanah_lain: document.getElementById('tanah_lain').value,
-        harga_tanah: document.getElementById('harga_tanah').value,
-        no_hp: document.getElementById('no_hp').value
-      };
+      try {
+        const fileMeteran = document.getElementById('foto_meteran').files[0];
+        const fileRuangTamu = document.getElementById('foto_ruang_tamu').files[0];
+        const fileDepanRumah = document.getElementById('foto_depan_rumah').files[0];
 
-      fetch(scriptURL, {
-        method: 'POST',
-        body: JSON.stringify(payload)
-      })
-      .then(res => res.json())
-      .then(data => {
-        alert('Mantap! Semua 28 data berhasil disimpan ke Sheet.');
+        const base64Meteran = await getBase64(fileMeteran);
+        const base64RuangTamu = await getBase64(fileRuangTamu);
+        const base64DepanRumah = await getBase64(fileDepanRumah);
+
+        const payload = {
+          rtrw: document.getElementById('rtrw').value,
+          nama: document.getElementById('nama').value,
+          jumlah_orang_kk: document.getElementById('jumlah_orang_kk').value,
+          alamat_kk: document.getElementById('alamat_kk').value,
+          kk_tambahan: document.getElementById('kk_tambahan').value,
+          catatan_tambahan: document.getElementById('catatan_tambahan').value,
+          alamat: document.getElementById('alamat').value,
+          ct: document.getElementById('ct').value,
+          disabilitas: document.getElementById('disabilitas').value,
+          usaha: document.getElementById('usaha').value,
+          catatan_pekerjaan: document.getElementById('catatan_pekerjaan').value,
+          gaji: document.getElementById('gaji').value,
+          status_rumah: document.getElementById('status_rumah').value,
+          surat_tanah: document.getElementById('surat_tanah').value,
+          luas_tanah: document.getElementById('luas_tanah').value,
+          idpel: document.getElementById('idpel').value,
+          watt: document.getElementById('watt').value,
+          bayar_listrik: document.getElementById('bayar_listrik').value,
+          pulsa: document.getElementById('pulsa').value,
+          makan_minggu: document.getElementById('makan_minggu').value,
+          bukan_makan_bulan: document.getElementById('bukan_makan_bulan').value,
+          bukan_makan_tahun: document.getElementById('bukan_makan_tahun').value,
+          gas_3kg: document.getElementById('gas_3kg').value,
+          gas_5kg: document.getElementById('gas_5kg').value,
+          kulkas: document.getElementById('kulkas').value,
+          ac: document.getElementById('ac').value,
+          gadget: document.getElementById('gadget').value,
+          motor: document.getElementById('motor').value,
+          nilai_motor: document.getElementById('nilai_motor').value,
+          mobil: document.getElementById('mobil').value,
+          nilai_mobil: document.getElementById('nilai_mobil').value,
+          emas: document.getElementById('emas').value,
+          tanah_lain: document.getElementById('tanah_lain').value,
+          harga_tanah: document.getElementById('harga_tanah').value,
+          no_hp: document.getElementById('no_hp').value,
+          
+          foto_meteran: base64Meteran,
+          foto_ruang_tamu: base64RuangTamu,
+          foto_depan_rumah: base64DepanRumah
+        };
+
+        const response = await fetch(scriptURL, {
+          method: 'POST',
+          body: JSON.stringify(payload)
+        });
+        
+        const data = await response.json();
+        alert('Data dan Foto berhasil disimpan ke Google Sheet!');
+        
         form.reset();
-        btnKirim.innerText = 'Simpan Data';
-        btnKirim.disabled = false;
-        window.scrollTo(0, 0); // Gulir otomatis kembali ke atas form
-      })
-      .catch(err => {
+        window.scrollTo(0, 0);
+      } catch(err) {
         alert('Gagal mengirim data! Pastikan HP terkoneksi internet.');
         console.error('Error:', err);
-        btnKirim.innerText = 'Simpan Data';
+      } finally {
+        btnKirim.innerText = 'Simpan Data & Foto';
         btnKirim.disabled = false;
-      });
+        loadingText.style.display = 'none';
+      }
     });
   </script>
 
